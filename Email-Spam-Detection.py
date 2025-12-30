@@ -2,6 +2,15 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import roc_curve, roc_auc_score
+import matplotlib.pyplot as plt
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    classification_report,
+)
 
 
 def main():
@@ -15,7 +24,9 @@ def main():
     # print(df)
 
     # vectorizer = TfidfVectorizer()
-    vectorizer = TfidfVectorizer(stop_words="english")  # max_features=8000,
+    vectorizer = TfidfVectorizer(
+        stop_words="english", max_features=15000
+    )  # max_features=8000,
 
     # df["text"] = df["Subject"] + " " + df["Message"]
     # X = vectorizer.fit_transform(df["text"])
@@ -24,26 +35,20 @@ def main():
     X = vectorizer.fit_transform(texts)
     print("TF-IDF shape:", X.shape)  # 33,716 ایمیل     n ویژگی (کلمه مهم)
 
-    #
-    y = df["Spam/Ham".replace({"ham": 0, "spam": 1})]
+    # y = df["Spam/Ham"].replace({"ham": 0, "spam": 1})
+
+    y = df["Spam/Ham"].map({"ham": 0, "spam": 1})
 
     X_train, X_test, y_train, y_test = train_test_split(
-        x, y, train_size=0.75, random_state=42, stratify=y
+        X, y, train_size=0.7, random_state=42, stratify=y
     )
 
     mlp = MLPClassifier(hidden_layer_sizes=(100,), max_iter=300, random_state=42)
     mlp.fit(X_train, y_train)
-    y_pred = mlp.predict(X_test)  # pish biniiiii
+    y_pred_mlp = mlp.predict(X_test)  # pish biniiiii
     y_prob_mlp = mlp.predict_proba(X_test)[:, 1]
 
     # moghayese y test , y pred
-    from sklearn.metrics import (
-        accuracy_score,
-        precision_score,
-        recall_score,
-        f1_score,
-        classification_report,
-    )
 
     print("MLP Accuracy:", accuracy_score(y_test, y_pred_mlp))
     print("MLP Precision:", precision_score(y_test, y_pred_mlp))
@@ -52,8 +57,6 @@ def main():
 
     print("\nClassification Report (MLP):")
     print(classification_report(y_test, y_pred_mlp))
-    from sklearn.metrics import roc_curve, roc_auc_score
-    import matplotlib.pyplot as plt
 
     fpr, tpr, _ = roc_curve(y_test, y_prob_mlp)
     auc_mlp = roc_auc_score(y_test, y_prob_mlp)
