@@ -2,15 +2,8 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import roc_curve, roc_auc_score
+from sklearn import metrics
 import matplotlib.pyplot as plt
-from sklearn.metrics import (
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    classification_report,
-)
 from sklearn.naive_bayes import MultinomialNB
 
 
@@ -60,16 +53,16 @@ def main():
 
     # moghayese y test , y pred
 
-    print("MLP Accuracy:", accuracy_score(y_test, y_pred_mlp))
-    print("MLP Precision:", precision_score(y_test, y_pred_mlp))
-    print("MLP Recall:", recall_score(y_test, y_pred_mlp))
-    print("MLP F1:", f1_score(y_test, y_pred_mlp))
+    print("MLP Accuracy:", metrics.accuracy_score(y_test, y_pred_mlp))
+    print("MLP Precision:", metrics.precision_score(y_test, y_pred_mlp))
+    print("MLP Recall:", metrics.recall_score(y_test, y_pred_mlp))
+    print("MLP F1:", metrics.f1_score(y_test, y_pred_mlp))
 
     print("\nClassification Report (MLP):")
-    print(classification_report(y_test, y_pred_mlp))
+    print(metrics.classification_report(y_test, y_pred_mlp))
 
-    fpr, tpr, _ = roc_curve(y_test, y_prob_mlp)
-    auc_mlp = roc_auc_score(y_test, y_prob_mlp)
+    fpr, tpr, _ = metrics.roc_curve(y_test, y_prob_mlp)
+    auc_mlp = metrics.roc_auc_score(y_test, y_prob_mlp)
 
     plt.figure()
     plt.plot(fpr, tpr, label=f"MLP (AUC = {auc_mlp:.3f})")
@@ -81,17 +74,18 @@ def main():
     plt.show()
     y_train_pred = mlp.predict(X_train)
 
-    print("Train Accuracy:", accuracy_score(y_train, y_train_pred))
-    print("Test Accuracy:", accuracy_score(y_test, y_pred_mlp))
+    print("Train Accuracy:", metrics.accuracy_score(y_train, y_train_pred))
+    print("Test Accuracy:", metrics.accuracy_score(y_test, y_pred_mlp))
 
     multinomialNB = MultinomialNB()
     multinomialNB.fit(X_train, y_train)
     y_pred_MNB = multinomialNB.predict(X_test)
+    # y_pred_MNB = multinomialNB.predict_proba(X_test)[:, 1]
 
-    print("MultinomialNB Accuracy:", accuracy_score(y_test, y_pred_MNB))
-    print("MultinomialNB Precision:", precision_score(y_test, y_pred_MNB))
-    print("MultinomialNB Recall:", recall_score(y_test, y_pred_MNB))
-    print("MultinomialNB F1:", f1_score(y_test, y_pred_MNB))
+    print("MultinomialNB Accuracy:", metrics.accuracy_score(y_test, y_pred_MNB))
+    print("MultinomialNB Precision:", metrics.precision_score(y_test, y_pred_MNB))
+    print("MultinomialNB Recall:", metrics.recall_score(y_test, y_pred_MNB))
+    print("MultinomialNB F1:", metrics.f1_score(y_test, y_pred_MNB))
 
 
 # درست کردن پرینت ها و متریک
