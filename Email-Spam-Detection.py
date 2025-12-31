@@ -69,6 +69,10 @@ def main():
     plt.title("ROC Curve - MLP")
     plt.legend()
     plt.show()
+    y_train_pred = mlp.predict(X_train)
+
+    print("Train Accuracy:", accuracy_score(y_train, y_train_pred))
+    print("Test Accuracy:", accuracy_score(y_test, y_pred_mlp))
 
 
 if __name__ == "__main__":
