@@ -43,7 +43,16 @@ def main():
         X, y, train_size=0.7, random_state=42, stratify=y
     )
 
-    mlp = MLPClassifier(hidden_layer_sizes=(100,), max_iter=300, random_state=42)
+    # mlp = MLPClassifier(hidden_layer_sizes=(100,), max_iter=300, random_state=42)
+    mlp = MLPClassifier(
+        hidden_layer_sizes=(100,),
+        max_iter=300,
+        early_stopping=True,
+        validation_fraction=0.1,
+        alpha=1e-3,
+        random_state=42,
+    )
+
     mlp.fit(X_train, y_train)
     y_pred_mlp = mlp.predict(X_test)  # pish biniiiii
     y_prob_mlp = mlp.predict_proba(X_test)[:, 1]
