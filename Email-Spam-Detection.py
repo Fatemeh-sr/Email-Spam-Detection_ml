@@ -11,6 +11,7 @@ from sklearn.metrics import (
     f1_score,
     classification_report,
 )
+from sklearn.naive_bayes import MultinomialNB
 
 
 def main():
@@ -83,6 +84,17 @@ def main():
     print("Train Accuracy:", accuracy_score(y_train, y_train_pred))
     print("Test Accuracy:", accuracy_score(y_test, y_pred_mlp))
 
+    multinomialNB = MultinomialNB()
+    multinomialNB.fit(X_train, y_train)
+    y_pred_MNB = multinomialNB.predict(X_test)
+
+    print("MultinomialNB Accuracy:", accuracy_score(y_test, y_pred_MNB))
+    print("MultinomialNB Precision:", precision_score(y_test, y_pred_MNB))
+    print("MultinomialNB Recall:", recall_score(y_test, y_pred_MNB))
+    print("MultinomialNB F1:", f1_score(y_test, y_pred_MNB))
+
+
+# درست کردن پرینت ها و متریک
 
 if __name__ == "__main__":
     main()
