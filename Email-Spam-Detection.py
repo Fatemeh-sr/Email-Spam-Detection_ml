@@ -17,11 +17,7 @@ def main():
     print(df.isnull().sum())
     # print(df)
 
-    # vectorizer = TfidfVectorizer()
-    vectorizer = TfidfVectorizer(
-        stop_words="english", max_features=15000
-    )  # max_features=8000,
-
+    vectorizer = TfidfVectorizer(stop_words="english", max_features=15000)
     # df["text"] = df["Subject"] + " " + df["Message"]
     # X = vectorizer.fit_transform(df["text"])
 
@@ -80,7 +76,6 @@ def main():
     multinomialNB = MultinomialNB()
     multinomialNB.fit(X_train, y_train)
     y_pred_MNB = multinomialNB.predict(X_test)
-    # y_pred_MNB = multinomialNB.predict_proba(X_test)[:, 1]
 
     print("MultinomialNB Accuracy:", metrics.accuracy_score(y_test, y_pred_MNB))
     print("MultinomialNB Precision:", metrics.precision_score(y_test, y_pred_MNB))
@@ -88,7 +83,7 @@ def main():
     print("MultinomialNB F1:", metrics.f1_score(y_test, y_pred_MNB))
 
 
-# درست کردن پرینت ها و متریک
+# درست کردن متریک
 
 if __name__ == "__main__":
     main()
