@@ -7,33 +7,7 @@ import matplotlib.pyplot as plt
 from sklearn.naive_bayes import MultinomialNB
 
 
-def main():
-    df = pd.read_csv("enron_spam_data.csv")
-    df.info()
-
-    df["Subject"] = df["Subject"].fillna("")
-    df["Message"] = df["Message"].fillna("")
-
-    print(df.isnull().sum())
-    # print(df)
-
-    vectorizer = TfidfVectorizer(stop_words="english", max_features=15000)
-    # df["text"] = df["Subject"] + " " + df["Message"]
-    # X = vectorizer.fit_transform(df["text"])
-
-    texts = df["Subject"].str.cat(df["Message"], sep=" ")
-    X = vectorizer.fit_transform(texts)
-    print("TF-IDF shape:", X.shape)  # 33,716 ایمیل     n ویژگی (کلمه مهم)
-
-    # y = df["Spam/Ham"].replace({"ham": 0, "spam": 1})
-
-    y = df["Spam/Ham"].map({"ham": 0, "spam": 1})
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, train_size=0.7, random_state=42, stratify=y
-    )
-
-    # mlp = MLPClassifier(hidden_layer_sizes=(100,), max_iter=300, random_state=42)
+def train_evaluate_mlp(X_train, X_test, y_train, y_test):
     mlp = MLPClassifier(
         hidden_layer_sizes=(100,),
         max_iter=300,
@@ -44,19 +18,56 @@ def main():
     )
 
     mlp.fit(X_train, y_train)
-    y_pred_mlp = mlp.predict(X_test)  # pish biniiiii
-    y_prob_mlp = mlp.predict_proba(X_test)[:, 1]
 
-    # moghayese y test , y pred
+    y_pred = mlp.predict(X_test)
+    y_prob = mlp.predict_proba(X_test)[:, 1]
 
-    print("MLP Accuracy:", metrics.accuracy_score(y_test, y_pred_mlp))
-    print("MLP Precision:", metrics.precision_score(y_test, y_pred_mlp))
-    print("MLP Recall:", metrics.recall_score(y_test, y_pred_mlp))
-    print("MLP F1:", metrics.f1_score(y_test, y_pred_mlp))
+    print("=== MLP Results ===")
+    print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
+    print("Precision:", metrics.precision_score(y_test, y_pred))
+    print("Recall:", metrics.recall_score(y_test, y_pred))
+    print("F1:", metrics.f1_score(y_test, y_pred))
+    print(metrics.classification_report(y_test, y_pred))
 
-    print("\nClassification Report (MLP):")
-    print(metrics.classification_report(y_test, y_pred_mlp))
+    return y_pred, y_prob
 
+
+def train_evaluate_mnb(X_train, X_test, y_train, y_test):
+    multinomialNB = MultinomialNB()
+    multinomialNB.fit(X_train, y_train)
+
+    y_pred = mnb.predict(X_test)
+
+    print("=== Multinomial Naive Bayes Results ===")
+    print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
+    print("Precision:", metrics.precision_score(y_test, y_pred))
+    print("Recall:", metrics.recall_score(y_test, y_pred))
+    print("F1:", metrics.f1_score(y_test, y_pred))
+
+    return y_pred
+
+
+def main():
+    df = pd.read_csv("enron_spam_data.csv")
+
+    df["Subject"] = df["Subject"].fillna("")
+    df["Message"] = df["Message"].fillna("")
+
+    texts = df["Subject"].str.cat(df["Message"], sep=" ")
+
+    vectorizer = TfidfVectorizer(stop_words="english", max_features=15000)
+    X = vectorizer.fit_transform(texts)
+
+    y = df["Spam/Ham"].map({"ham": 0, "spam": 1})
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, train_size=0.7, random_state=42, stratify=y
+    )
+
+    # MLP
+    y_pred_mlp, y_prob_mlp = train_evaluate_mlp(X_train, X_test, y_train, y_test)
+
+    # ROC Curve for MLP
     fpr, tpr, _ = metrics.roc_curve(y_test, y_prob_mlp)
     auc_mlp = metrics.roc_auc_score(y_test, y_prob_mlp)
 
@@ -68,22 +79,47 @@ def main():
     plt.title("ROC Curve - MLP")
     plt.legend()
     plt.show()
-    y_train_pred = mlp.predict(X_train)
 
-    print("Train Accuracy:", metrics.accuracy_score(y_train, y_train_pred))
-    print("Test Accuracy:", metrics.accuracy_score(y_test, y_pred_mlp))
+    # Naive Bayes
+    train_evaluate_mnb(X_train, X_test, y_train, y_test)
 
-    multinomialNB = MultinomialNB()
-    multinomialNB.fit(X_train, y_train)
-    y_pred_MNB = multinomialNB.predict(X_test)
+    # Naive Bayes
+    y_pred_mnb = mnb.predict(X_test)
+    y_prob_mnb = mnb.predict_proba(X_test)[:, 1]  # احتمال کلاس 1
 
-    print("MultinomialNB Accuracy:", metrics.accuracy_score(y_test, y_pred_MNB))
-    print("MultinomialNB Precision:", metrics.precision_score(y_test, y_pred_MNB))
-    print("MultinomialNB Recall:", metrics.recall_score(y_test, y_pred_MNB))
-    print("MultinomialNB F1:", metrics.f1_score(y_test, y_pred_MNB))
+    # ROC Curve for NB
+    fpr_nb, tpr_nb, _ = metrics.roc_curve(y_test, y_prob_mnb)
+    auc_nb = metrics.roc_auc_score(y_test, y_prob_mnb)
 
+    plt.plot(fpr_nb, tpr_nb, label=f"NB (AUC = {auc_nb:.3f})")
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title("ROC Curve - Naive Bayes")
+    plt.plot([0, 1], [0, 1], linestyle="--")
+    plt.legend()
+    plt.show()
 
-# درست کردن متریک
+    # ROC Curve comparison for MLP and Naive Bayes
+
+    # احتمال کلاس 1
+    y_prob_mnb = mnb.predict_proba(X_test)[:, 1]
+
+    fpr_mlp, tpr_mlp, _ = metrics.roc_curve(y_test, y_prob_mlp)
+    auc_mlp = metrics.roc_auc_score(y_test, y_prob_mlp)
+
+    fpr_nb, tpr_nb, _ = metrics.roc_curve(y_test, y_prob_mnb)
+    auc_nb = metrics.roc_auc_score(y_test, y_prob_mnb)
+
+    plt.figure()
+    plt.plot(fpr_mlp, tpr_mlp, label=f"MLP (AUC = {auc_mlp:.3f})")
+    plt.plot(fpr_nb, tpr_nb, label=f"Naive Bayes (AUC = {auc_nb:.3f})")
+    plt.plot([0, 1], [0, 1], linestyle="--")  # خط تصادفی
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title("ROC Curve Comparison")
+    plt.legend()
+    plt.show()
+
 
 if __name__ == "__main__":
     main()
