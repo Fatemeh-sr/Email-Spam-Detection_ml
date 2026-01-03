@@ -36,7 +36,7 @@ def train_evaluate_mnb(X_train, X_test, y_train, y_test):
     multinomialNB = MultinomialNB()
     multinomialNB.fit(X_train, y_train)
 
-    y_pred = mnb.predict(X_test)
+    y_pred = multinomialNB.predict(X_test)
 
     print("=== Multinomial Naive Bayes Results ===")
     print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
@@ -67,37 +67,8 @@ def main():
     # MLP
     y_pred_mlp, y_prob_mlp = train_evaluate_mlp(X_train, X_test, y_train, y_test)
 
-    # ROC Curve for MLP
-    fpr, tpr, _ = metrics.roc_curve(y_test, y_prob_mlp)
-    auc_mlp = metrics.roc_auc_score(y_test, y_prob_mlp)
-
-    plt.figure()
-    plt.plot(fpr, tpr, label=f"MLP (AUC = {auc_mlp:.3f})")
-    plt.plot([0, 1], [0, 1], linestyle="--")
-    plt.xlabel("False Positive Rate")
-    plt.ylabel("True Positive Rate")
-    plt.title("ROC Curve - MLP")
-    plt.legend()
-    plt.show()
-
     # Naive Bayes
     train_evaluate_mnb(X_train, X_test, y_train, y_test)
-
-    # Naive Bayes
-    y_pred_mnb = mnb.predict(X_test)
-    y_prob_mnb = mnb.predict_proba(X_test)[:, 1]  # احتمال کلاس 1
-
-    # ROC Curve for NB
-    fpr_nb, tpr_nb, _ = metrics.roc_curve(y_test, y_prob_mnb)
-    auc_nb = metrics.roc_auc_score(y_test, y_prob_mnb)
-
-    plt.plot(fpr_nb, tpr_nb, label=f"NB (AUC = {auc_nb:.3f})")
-    plt.xlabel("False Positive Rate")
-    plt.ylabel("True Positive Rate")
-    plt.title("ROC Curve - Naive Bayes")
-    plt.plot([0, 1], [0, 1], linestyle="--")
-    plt.legend()
-    plt.show()
 
     # ROC Curve comparison for MLP and Naive Bayes
 
