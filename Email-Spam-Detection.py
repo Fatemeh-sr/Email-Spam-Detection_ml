@@ -19,17 +19,17 @@ def train_evaluate_mlp(X_train, X_test, y_train, y_test):
 
     mlp.fit(X_train, y_train)
 
-    y_pred = mlp.predict(X_test)
+    y_prediction = mlp.predict(X_test)
     y_prob = mlp.predict_proba(X_test)[:, 1]
 
-    print("=== MLP Results ===")
-    print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
-    print("Precision:", metrics.precision_score(y_test, y_pred))
-    print("Recall:", metrics.recall_score(y_test, y_pred))
-    print("F1:", metrics.f1_score(y_test, y_pred))
-    print(metrics.classification_report(y_test, y_pred))
+    print("------------- MLP -------------")
+    print("Accuracy:", metrics.accuracy_score(y_test, y_prediction))
+    print("Precision:", metrics.precision_score(y_test, y_prediction))
+    print("Recall:", metrics.recall_score(y_test, y_prediction))
+    print("F1:", metrics.f1_score(y_test, y_prediction))
+    print(metrics.classification_report(y_test, y_prediction))
 
-    return y_pred, y_prob
+    return y_prediction, y_prob
 
 
 def train_evaluate_mnb(X_train, X_test, y_train, y_test):
@@ -38,11 +38,12 @@ def train_evaluate_mnb(X_train, X_test, y_train, y_test):
 
     y_pred = multinomialNB.predict(X_test)
 
-    print("=== Multinomial Naive Bayes Results ===")
+    print("------------- Multinomial Naive Bayes -------------")
     print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
     print("Precision:", metrics.precision_score(y_test, y_pred))
     print("Recall:", metrics.recall_score(y_test, y_pred))
     print("F1:", metrics.f1_score(y_test, y_pred))
+    print(metrics.classification_report(y_test, y_pred))
 
     return y_pred
 
