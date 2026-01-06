@@ -7,7 +7,7 @@ from sklearn.naive_bayes import MultinomialNB
 
 
 def train_MLPClassifier(X_train, X_test, y_train, y_test):
-    mlp = MLPClassifier(
+    model = MLPClassifier(
         hidden_layer_sizes=(100,),
         max_iter=300,
         early_stopping=True,
@@ -16,39 +16,39 @@ def train_MLPClassifier(X_train, X_test, y_train, y_test):
         random_state=42,
     )
 
-    mlp.fit(X_train, y_train)
+    model.fit(X_train, y_train)
 
-    y_prediction = mlp.predict(X_test)
+    predicted_y = model.predict(X_test)
 
     print("------------- MLP -------------\n")
-    print("Accuracy:", metrics.accuracy_score(y_test, y_prediction))
-    print("Precision:", metrics.precision_score(y_test, y_prediction))
-    print("Recall:", metrics.recall_score(y_test, y_prediction))
-    print("F1:", metrics.f1_score(y_test, y_prediction))
-    print(metrics.classification_report(y_test, y_prediction))
+    print("Accuracy:", metrics.accuracy_score(y_test, predicted_y))
+    print("Precision:", metrics.precision_score(y_test, predicted_y))
+    print("Recall:", metrics.recall_score(y_test, predicted_y))
+    print("F1:", metrics.f1_score(y_test, predicted_y))
+    print(metrics.classification_report(y_test, predicted_y))
 
-    return mlp
+    return model
 
 
 def train_MultinomialNB(X_train, X_test, y_train, y_test):
-    multinomialNB = MultinomialNB()
-    multinomialNB.fit(X_train, y_train)
+    model = MultinomialNB()
+    model.fit(X_train, y_train)
 
-    y_pred = multinomialNB.predict(X_test)
+    predicted_y = model.predict(X_test)
 
     print("------------- Multinomial Naive Bayes -------------\n")
-    print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
-    print("Precision:", metrics.precision_score(y_test, y_pred))
-    print("Recall:", metrics.recall_score(y_test, y_pred))
-    print("F1:", metrics.f1_score(y_test, y_pred))
-    print(metrics.classification_report(y_test, y_pred))
+    print("Accuracy:", metrics.accuracy_score(y_test, predicted_y))
+    print("Precision:", metrics.precision_score(y_test, predicted_y))
+    print("Recall:", metrics.recall_score(y_test, predicted_y))
+    print("F1:", metrics.f1_score(y_test, predicted_y))
+    print(metrics.classification_report(y_test, predicted_y))
 
-    return multinomialNB
+    return model
 
 
-def predict_new_email(file_path, vectorizer, mlp_model, mnb_model):
+def predict_new_email(this_file, vectorizer, mlp_model, mnb_model):
     try:
-        with open(file_path, encoding="utf-8") as my_file:
+        with open(this_file, encoding="utf-8") as my_file:
             email_text = my_file.read()
 
         email_vector = vectorizer.transform([email_text])
@@ -62,7 +62,7 @@ def predict_new_email(file_path, vectorizer, mlp_model, mnb_model):
         print(f"Naive Bayes Prediction: {mnb_label}")
 
     except FileNotFoundError:
-        print(f"File '{file_path}' not found.")
+        print(f"File '{this_file}' not found.")
     except Exception as e:
         print("Error:", e)
 
@@ -76,7 +76,6 @@ def main():
     texts = df["Subject"].str.cat(df["Message"], sep=" ")
 
     vectorizer = TfidfVectorizer(stop_words="english", max_features=15000)
-    X = vectorizer.fit_transform(texts)
 
     y = df["Spam/Ham"].map({"ham": 0, "spam": 1})
 
