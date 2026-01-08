@@ -8,7 +8,6 @@ from sklearn.naive_bayes import MultinomialNB
 
 def train_MLPClassifier(X_train, X_test, y_train, y_test):
     model = MLPClassifier(
-        hidden_layer_sizes=(100,),
         max_iter=300,
         early_stopping=True,
         validation_fraction=0.1,
@@ -69,6 +68,7 @@ def predict_new_email(this_file, vectorizer, mlp_model, mnb_model):
 
 def main():
     df = pd.read_csv("enron_spam_data.csv")
+    # df.info()
 
     df["Subject"] = df["Subject"].fillna("")
     df["Message"] = df["Message"].fillna("")
@@ -78,6 +78,7 @@ def main():
     vectorizer = TfidfVectorizer(stop_words="english", max_features=15000)
 
     y = df["Spam/Ham"].map({"ham": 0, "spam": 1})
+    print(y.value_counts())
 
     X_train_text, X_test_text, y_train, y_test = train_test_split(
         texts, y, train_size=0.7, random_state=42, stratify=y
