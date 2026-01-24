@@ -92,7 +92,8 @@ def main():
     mlp_model = train_MLPClassifier(X_train, X_test, y_train, y_test)
     mnb_model = train_MultinomialNB(X_train, X_test, y_train, y_test)
 
-    # predict_new_email("new_email.txt", vectorizer, mlp_model, mnb_model)
+    predict_new_email("new_email.txt", vectorizer, mlp_model, mnb_model)
+    predict_new_email("new_email2.txt", vectorizer, mlp_model, mnb_model)
 
 
 if __name__ == "__main__":
