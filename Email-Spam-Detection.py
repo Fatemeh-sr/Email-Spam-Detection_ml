@@ -69,7 +69,6 @@ def predict_new_email(this_file, vectorizer, mlp_model, mnb_model):
 def main():
     df = pd.read_csv("enron_spam_data.csv")
     # df.info()
-    # print(y.value_counts())           ---     Spam/Ham   1: 17171  ,  0: 16545           .. is well-balanced
 
     # print(df.isnull().sum())          ---     Subject --> 289    ,  Message --> 371
     df["Subject"] = df["Subject"].fillna("")
@@ -82,6 +81,7 @@ def main():
     # Target
     y = df["Spam/Ham"].map({"ham": 0, "spam": 1})
     print(y.value_counts())
+    # Spam/Ham   1: 17171  ,  0: 16545           .. is well-balanced
 
     X_train_text, X_test_text, y_train, y_test = train_test_split(
         texts, y, train_size=0.7, random_state=42, stratify=y
