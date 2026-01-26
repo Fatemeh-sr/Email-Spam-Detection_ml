@@ -52,12 +52,11 @@ The system is trained on the **Enron Spam Dataset** and uses **TF-IDF vectorizat
 
 ---
 
-
  The program will:
 
-   * Train both models
-   * Print evaluation metrics
-   * Predict whether `new_email.txt` and `new_email2.txt` are spam or ham
+   * Train both the MLP and Naive Bayes models
+   * Print evaluation metrics (Accuracy, Precision, Recall, F1-score)
+   * Predict whether any given input email (e.g., new_email.txt, new_email2.txt) is spam or ham
 
 ---
 
