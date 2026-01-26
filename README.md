@@ -53,7 +53,7 @@ The system is trained on the **Enron Spam Dataset** and uses **TF-IDF vectorizat
 ---
 
 
-3. The program will:
+ The program will:
 
    * Train both models
    * Print evaluation metrics
